@@ -19,6 +19,7 @@ from flask import Flask, jsonify, render_template, request
 
 from core import analyze as analyze_mod
 from core import extract as extract_mod
+from core import preprocess as preprocess_mod
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024  # 20 MB upload cap
@@ -69,6 +70,11 @@ def api_analyze():
         return jsonify({"ok": False, "error": f"could not read image: {exc}"}), 400
 
     t0 = time.time()
+    # Clean the photo first (deskew, contrast) - a real phone photo is never a clean scan.
+    # ?preprocess=off turns it off, so the improvement can be demonstrated side by side.
+    pp_mode = request.form.get("preprocess", "auto")
+    img, pp_info = preprocess_mod.preprocess(img, mode=pp_mode)
+
     ext = extract_mod.extract(img)
     if not ext.get("ok"):
         return jsonify({"ok": False, "error": ext.get("error", "extraction failed")}), 502
@@ -78,6 +84,7 @@ def api_analyze():
     analysis["elapsed_s"] = round(time.time() - t0, 1)
     analysis["model"] = extract_mod.MODEL
     analysis["is_lab_report"] = ext.get("is_lab_report", True)
+    analysis["preprocess"] = pp_info
 
     _HISTORY.append(analysis)
     del _HISTORY[:-10]  # keep the last 10 for trends
