@@ -28,10 +28,9 @@ python, flask, pillow, opencv-style vision pipeline via an OpenAI-compatible end
 
 **Links**
 - GitHub: https://github.com/ronisaguey-ux/lablens
-- Video: **needs a public URL.** The demo file is in the repo (`LabLens-demo.mp4`, 1.7 MB).
-  Uploading it to YouTube from here failed: the Chrome profile copy is not signed in to Google
-  (`accounts.google.com/signin` redirect) — a credentials wall, not a code one. Bob uploads it
-  unlisted in ~30s, or gives a moment to re-auth and I do it.
+- Video (public URL, verified downloadable): **https://github.com/ronisaguey-ux/lablens/releases/download/v1.0/LabLens-demo.mp4**
+  (38.4 s, 1.7 MB). If the event insists on a YouTube link, an unlisted upload is still needed —
+  the local Chrome profile is not signed in to Google, so Bob uploads in ~30 s or re-auths.
 - App: runs locally — `pip install -r requirements.txt && ./run.sh` → http://127.0.0.1:5091
 
 **"What did you learn" / challenges (short)**
@@ -105,7 +104,7 @@ console errors. The demo video is unedited footage of the running app.
 - Prize note: "$40,000" is mostly credits/memberships; some cash tiers.
 - Required assets: interactive project + demo video + **one-page PDF** + GitHub repo.
   - PDF: `LabLens-one-page.pdf` (built)
-  - Video: `LabLens-demo.mp4` (built)
+  - Video: `LabLens-demo.mp4` (built) + public URL above
   - Repo: pushed (built)
 
 ---
