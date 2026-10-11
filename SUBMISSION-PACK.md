@@ -28,7 +28,10 @@ python, flask, pillow, opencv-style vision pipeline via an OpenAI-compatible end
 
 **Links**
 - GitHub: https://github.com/ronisaguey-ux/lablens
-- Video: (YouTube unlisted link — upload `LabLens-demo.mp4`)
+- Video: **needs a public URL.** The demo file is in the repo (`LabLens-demo.mp4`, 1.7 MB).
+  Uploading it to YouTube from here failed: the Chrome profile copy is not signed in to Google
+  (`accounts.google.com/signin` redirect) — a credentials wall, not a code one. Bob uploads it
+  unlisted in ~30s, or gives a moment to re-auth and I do it.
 - App: runs locally — `pip install -r requirements.txt && ./run.sh` → http://127.0.0.1:5091
 
 **"What did you learn" / challenges (short)**
