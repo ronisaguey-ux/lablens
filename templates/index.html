@@ -157,7 +157,8 @@ function render(j){
     <span class="chip hi">${s.abnormal||0} out of range</span>
     <span class="chip ok">${s.normal||0} in range</span>
     <span class="chip mu">${s.total||0} values read</span>
-    <span class="chip mu">${j.model||''} · ${j.elapsed_s||''}s</span></div>`;
+    <span class="chip mu">${j.model||''} · ${j.elapsed_s||''}s</span>
+    ${(j.preprocess&&(j.preprocess.steps||[]).length)?`<span class="chip mu" title="${esc((j.preprocess.steps||[]).join(' · '))}">🔧 ${esc(j.preprocess.steps.join(' · '))}</span>`:''}</div>`;
   if(j.lab_name||j.collection_date)
     h += `<div class="muted" style="margin-bottom:8px">${esc(j.lab_name||'')} ${j.collection_date?('· '+esc(j.collection_date)):''}</div>`;
   h += `<table><thead><tr><th>Test</th><th>Result</th><th>Range</th><th>Status</th></tr></thead><tbody>`;
