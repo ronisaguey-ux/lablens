@@ -4,3 +4,5 @@ __pycache__/
 .env
 samples/ui_screenshot.png
 samples/demo_walkthrough.webm
+samples/_degraded_preprocessed.png
+samples/sample_report_DEGRADED.png

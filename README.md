@@ -67,6 +67,21 @@ Every flag in the run matched the abnormality deliberately built into the sample
 hemoglobin/hematocrit/HDL/vitamin D/ferritin; high fasting glucose/A1c/cholesterol/LDL/
 triglycerides/TSH).
 
+### Real photos are not scans — and the difference is measurable
+
+A clean PNG is the easy case. To test what a *person* actually uploads, the sample was
+degraded: rotated 6.5° and darkened with an uneven light gradient (`make_degraded`). The
+same pipeline was run twice on that hard image, with photo cleanup off and on:
+
+| Preprocessing | Rows read | Known values correct (of 12) |
+|---|---|---|
+| **off** | **0** — the model could not read the photo at all | 0 |
+| **auto** (deskew + contrast) | **20** | **11** |
+
+Cleanup does not just tidy a good photo; it is the difference between a usable answer and
+no answer. The deskew matched the injected rotation to within 0.25° (-6.75° measured for a
+-6.5° rotation). The exact steps applied are reported with every result and shown in the UI.
+
 ## Run it
 
 ```sh
