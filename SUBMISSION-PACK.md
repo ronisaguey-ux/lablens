@@ -114,3 +114,14 @@ console errors. The demo video is unedited footage of the running app.
 DSH (and to a lesser degree UnivaBio) assume the entrant is a **student at an educational
 institution**. Bob is 16 and left school. Options: state a school of record, or ask the organisers
 before submitting. This is deliberately left for Bob — it is an eligibility statement in his name.
+
+---
+
+## Venue links (paste into the submission forms)
+
+| Event | Submit / overview page | Deadline |
+|---|---|---|
+| DSH Hacks V2 | https://dsh-hacks-v2.devpost.com/ | Nov 8 (API: Nov 15) |
+| UnivaBio | https://univabio.devpost.com/ | **Oct 13 11:45pm EDT** |
+
+Both are Devpost — the same account used for the ForgeHacks entry signs in.
