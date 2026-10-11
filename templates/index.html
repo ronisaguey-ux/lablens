@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LabLens — understand your bloodwork</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230e7c86'/><text x='16' y='23' font-size='20' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>L</text></svg>">
+<style>
+  :root{
+    --bg:#f6f8fb; --card:#ffffff; --ink:#0f1b2d; --muted:#5b6b82; --line:#e3e9f2;
+    --accent:#0e7c86; --accent2:#0b5d66; --high:#c0392b; --highbg:#fdecea;
+    --low:#b7791f; --lowbg:#fdf6e3; --normal:#1f7a4d; --normalbg:#eafaf1;
+    --urgent:#a3160f; --shadow:0 6px 24px rgba(15,27,45,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 18px 64px}
+  header.top{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--accent),#12b0a0);
+    display:grid;place-items:center;color:#fff;font-weight:800;font-size:20px;box-shadow:var(--shadow)}
+  h1{font-size:24px;margin:0;letter-spacing:-.02em}
+  .tag{color:var(--muted);margin:2px 0 22px;font-size:15px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);
+    padding:22px;margin-bottom:18px}
+  .drop{border:2px dashed #c6d3e6;border-radius:14px;padding:34px 18px;text-align:center;cursor:pointer;
+    transition:.15s;background:#fbfdff}
+  .drop:hover,.drop.over{border-color:var(--accent);background:#f0fbfb}
+  .drop b{color:var(--accent2)}
+  .drop .hint{color:var(--muted);font-size:13.5px;margin-top:6px}
+  input[type=file]{display:none}
+  .btn{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:11px 18px;font-size:15px;
+    font-weight:600;cursor:pointer}
+  .btn.ghost{background:#eef4f7;color:var(--accent2)}
+  .btn[disabled]{opacity:.55;cursor:default}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  #preview{max-width:100%;border-radius:12px;border:1px solid var(--line);margin-top:14px;display:none}
+  .spinner{width:18px;height:18px;border:3px solid #d5e6e8;border-top-color:var(--accent);border-radius:50%;
+    animation:spin .8s linear infinite;display:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .urgent{background:var(--urgent);color:#fff;border-radius:14px;padding:16px 18px;margin-bottom:16px;
+    box-shadow:var(--shadow)}
+  .urgent h3{margin:0 0 6px;font-size:17px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 14px}
+  .chip{border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600}
+  .chip.hi{background:var(--highbg);color:var(--high)}
+  .chip.lo{background:var(--lowbg);color:var(--low)}
+  .chip.ok{background:var(--normalbg);color:var(--normal)}
+  .chip.mu{background:#eef2f7;color:var(--muted)}
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+  .test{font-weight:650}
+  .cat{display:block;color:var(--muted);font-size:12.5px;font-weight:400;margin-top:2px}
+  .val{font-variant-numeric:tabular-nums;font-weight:700}
+  .badge{display:inline-block;border-radius:7px;padding:2px 8px;font-size:12px;font-weight:700;margin-top:3px}
+  .badge.high{background:var(--highbg);color:var(--high)}
+  .badge.low{background:var(--lowbg);color:var(--low)}
+  .badge.normal{background:var(--normalbg);color:var(--normal)}
+  .badge.unknown{background:#eef2f7;color:var(--muted)}
+  details{margin-top:6px}
+  summary{cursor:pointer;color:var(--accent2);font-size:13.5px;font-weight:600}
+  .exp{color:#26364d;font-size:14px;margin-top:8px;background:#f8fbfe;border-left:3px solid var(--accent);
+    padding:10px 12px;border-radius:8px}
+  .exp p{margin:0 0 7px}
+  .exp .why{color:var(--muted);font-size:13px}
+  .trend{font-size:13.5px;color:#26364d}
+  .trend .pt{display:inline-block;background:#eef4f7;border-radius:7px;padding:3px 8px;margin:3px 4px 0 0}
+  .disc{color:var(--muted);font-size:12.5px;line-height:1.6;margin-top:8px}
+  .muted{color:var(--muted)}
+  .hrow td{background:#fafcff}
+  footer{color:var(--muted);font-size:12.5px;text-align:center;margin-top:26px}
+  @media(max-width:560px){th:nth-child(3),td:nth-child(3){display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo">L</div>
+    <div>
+      <h1>LabLens</h1>
+      <div class="muted" style="font-size:13.5px">Understand your bloodwork in plain English</div>
+    </div>
+  </header>
+  <p class="tag">Photograph a lab report. LabLens reads the numbers, flags what's out of range,
+    and explains each one — grounded in reference ranges, never a diagnosis.</p>
+
+  <div class="card">
+    <div id="drop" class="drop">
+      <div>📄 <b>Drop a lab report</b> or <b>tap to choose / take a photo</b></div>
+      <div class="hint">PNG · JPG · HEIC-to-JPG · max 20 MB</div>
+    </div>
+    <input type="file" id="file" accept="image/*" capture="environment">
+    <img id="preview" alt="report preview">
+    <div class="row" style="margin-top:14px">
+      <button class="btn" id="go" disabled>Analyze report</button>
+      <button class="btn ghost" id="reset" style="display:none">Clear</button>
+      <div class="spinner" id="spin"></div>
+      <span id="status" class="muted" style="font-size:13.5px"></span>
+    </div>
+  </div>
+
+  <div id="out"></div>
+
+  <footer>LabLens explains; it does not diagnose. Always confirm with a clinician.
+    Reference ranges differ between labs — the report's own range is used when present.</footer>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+let fileObj = null;
+
+function pick(f){
+  if(!f) return;
+  fileObj = f;
+  const u = URL.createObjectURL(f);
+  $('#preview').src = u; $('#preview').style.display='block';
+  $('#go').disabled = false; $('#status').textContent = '';
+  $('#out').innerHTML='';
+}
+$('#drop').onclick = ()=> $('#file').click();
+$('#file').onchange = e => pick(e.target.files[0]);
+['dragover','dragenter'].forEach(ev=>$('#drop').addEventListener(ev,e=>{e.preventDefault();$('#drop').classList.add('over')}));
+['dragleave','drop'].forEach(ev=>$('#drop').addEventListener(ev,e=>{e.preventDefault();$('#drop').classList.remove('over')}));
+$('#drop').addEventListener('drop', e=> pick(e.dataTransfer.files[0]));
+
+$('#reset').onclick = ()=>{ fileObj=null; $('#preview').style.display='none'; $('#out').innerHTML='';
+  $('#go').disabled=true; $('#reset').style.display='none'; $('#file').value=''; };
+
+$('#go').onclick = async ()=>{
+  if(!fileObj) return;
+  $('#go').disabled=true; $('#spin').style.display='inline-block';
+  $('#status').textContent='Reading the report… (vision model; ~10-15s)';
+  const fd = new FormData(); fd.append('image', fileObj);
+  try{
+    const r = await fetch('/api/analyze', {method:'POST', body:fd});
+    const j = await r.json();
+    if(!j.ok){ $('#status').textContent='Could not analyze: '+(j.error||'unknown error'); return; }
+    render(j); $('#status').textContent=''; $('#reset').style.display='inline-block';
+  }catch(e){ $('#status').textContent='Request failed: '+e.message; }
+  finally{ $('#spin').style.display='none'; $('#go').disabled=false; }
+};
+
+const esc = s => (s==null?'':String(s)).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function badge(f){ return `<span class="badge ${f}">${f.toUpperCase()}</span>`; }
+
+function render(j){
+  const s = j.summary||{};
+  let h = '';
+  if((j.urgent||[]).length){
+    h += `<div class="urgent"><h3>⚠ Discuss this with a clinician promptly</h3>`;
+    j.urgent.forEach(u=> h += `<div>${esc(u.analyte)}: ${esc(u.value)} ${esc(u.unit||'')} — a ${u.direction} value at or past a published critical threshold.</div>`);
+    h += `</div>`;
+  }
+  h += `<div class="card">`;
+  h += `<div class="chips">
+    <span class="chip hi">${s.abnormal||0} out of range</span>
+    <span class="chip ok">${s.normal||0} in range</span>
+    <span class="chip mu">${s.total||0} values read</span>
+    <span class="chip mu">${j.model||''} · ${j.elapsed_s||''}s</span></div>`;
+  if(j.lab_name||j.collection_date)
+    h += `<div class="muted" style="margin-bottom:8px">${esc(j.lab_name||'')} ${j.collection_date?('· '+esc(j.collection_date)):''}</div>`;
+  h += `<table><thead><tr><th>Test</th><th>Result</th><th>Range</th><th>Status</th></tr></thead><tbody>`;
+  // abnormal first, then normal
+  const rows = (j.results||[]).slice().sort((a,b)=>{
+    const r = x => x.flag==='normal'?1:(x.flag==='unknown'?2:0); return r(a)-r(b);
+  });
+  rows.forEach(r=>{
+    const cls = r.flag==='normal'?'':(r.flag==='unknown'?'':'hrow');
+    const rng = r.range_used && (r.range_used.low!=null||r.range_used.high!=null)
+      ? `${r.range_used.low!=null?r.range_used.low:''}${r.range_used.low!=null&&r.range_used.high!=null?'–':''}${r.range_used.high!=null?r.range_used.high:''}`
+      : (r.reference_range||'—');
+    let exp='';
+    if(r.plain||r.meaning){
+      exp = `<details><summary>What this means</summary><div class="exp">
+        ${r.plain?`<p>${esc(r.plain)}</p>`:''}
+        ${r.meaning?`<p><b>${esc(r.flag==='high'?'If it stays high':'If it stays low')}:</b> ${esc(r.meaning)}</p>`:''}
+        ${r.why_matters?`<p class="why">Why it matters: ${esc(r.why_matters)}</p>`:''}
+        ${r.note?`<p class="why">${esc(r.note)}</p>`:''}
+        <p class="why">Range used: ${r.range_used&&r.range_used.source?esc(r.range_used.source):'n/a'}.</p>
+      </div></details>`;
+    } else if(r.note){ exp = `<div class="muted" style="font-size:12.5px;margin-top:4px">${esc(r.note)}</div>`; }
+    h += `<tr class="${cls}"><td><span class="test">${esc(r.test_name)}</span>${r.category?`<span class="cat">${esc(r.category)}</span>`:''}</td>
+      <td class="val">${esc(r.value)} <span class="muted">${esc(r.unit||'')}</span></td>
+      <td class="muted">${esc(rng)}</td>
+      <td>${badge(r.flag)}</td></tr>`;
+    if(exp) h += `<tr class="${cls}"><td colspan="4" style="padding-top:0">${exp}</td></tr>`;
+  });
+  h += `</tbody></table>`;
+  if((j.unreadable||[]).length)
+    h += `<div class="muted" style="margin-top:10px;font-size:13px">Could not read: ${j.unreadable.map(esc).join(', ')}</div>`;
+  h += `<div class="disc">${esc(j.disclaimer||'')}</div></div>`;
+
+  const tr = (j.trends||[]).filter(t=>t.points.length>1);
+  if(tr.length){
+    h += `<div class="card"><h3 style="margin:0 0 8px">Trends across your reports</h3>`;
+    tr.forEach(t=>{
+      h += `<div class="trend"><b>${esc(t.analyte)}</b> (${esc(t.unit||'')}): `;
+      t.points.forEach(p=> h += `<span class="pt">${esc(p.date)}: ${esc(p.value)}</span>`);
+      h += `</div>`;
+    });
+    h += `</div>`;
+  }
+  $('#out').innerHTML = h;
+}
+</script>
+</body>
+</html>

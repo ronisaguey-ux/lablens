@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+samples/ui_screenshot.png
+samples/demo_walkthrough.webm
