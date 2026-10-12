@@ -17,7 +17,7 @@ sys.path.insert(0, "/home/roni/Roni_workspace/trending-tt/scripts")
 from browser import launch_chrome, connect
 
 PORT = 9367
-PROFILE = "/tmp/opencode/lablens_ytprof"
+PROFILE = "/tmp/opencode/bsprof"
 CH = "UCEYajMIs22LFYb9EU_APEZg"
 
 
@@ -52,9 +52,10 @@ def main():
         time.sleep(18)
 
         js = page.evaluate
+        has_desc = "true" if desc else "false"   # JS boolean, never Python 'True'
         js(f"""()=>{{const b=document.querySelectorAll("ytcp-uploads-dialog div[contenteditable='true']");
           if(b[0]){{b[0].focus();b[0].innerText={title!r};b[0].dispatchEvent(new Event('input',{{bubbles:true}}));}}
-          if(b[1]&&({bool(desc)!r})){{b[1].focus();b[1].innerText={desc!r};b[1].dispatchEvent(new Event('input',{{bubbles:true}}));}}}}""")
+          if(b[1]&&({has_desc})){{b[1].focus();b[1].innerText={desc!r};b[1].dispatchEvent(new Event('input',{{bubbles:true}}));}}}}""")
         time.sleep(2)
         js("""()=>{const r=document.querySelector("tp-yt-paper-radio-button[name='VIDEO_MADE_FOR_KIDS_NOT_MFK']");r&&r.click();}""")
         time.sleep(2)
