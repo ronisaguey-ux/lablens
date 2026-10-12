@@ -8,8 +8,8 @@
 
 | Event | Age rule | Deadline | Cash | Status |
 |---|---|---|---|---|
-| DSH Hacks V2 | 13+ worldwide | ~Nov 8 | 1st $3,928 / 2nd $3,543 / 3rd $3,363 | ready to submit |
-| UnivaBio | 13+ students | Oct 13 | mostly credits | tight — build done, needs submit |
+| DSH Hacks V2 | 13+, **students only** | Nov 14 | **NON-CASH** (credits/licences only) | built, not submitted |
+| UnivaBio | 13+, **students only** | Oct 20 | **NON-CASH** (credits/licences only) | built, not submitted |
 
 ## Deliverables
 
